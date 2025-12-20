@@ -1,0 +1,33 @@
+---
+- name: Install Nginx on vms
+  hosts: VMs
+  become: true  
+  vars:
+    ansible_ssh_user: fox
+
+  pre_tasks:
+    - name: Validating the ssh port is open and
+      wait_for:
+        host: "{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}"
+        port: 22
+        delay: 5
+        timeout: 300
+        state: started
+        search_regex: OpenSSH
+        
+  tasks:
+    - name: update APT cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Nginx install
+      apt:
+        name: nginx
+        state: present
+
+    - name: Check nginx run
+      service:
+        name: nginx
+        state: started
+        enabled: yes
