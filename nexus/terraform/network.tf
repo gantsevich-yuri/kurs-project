@@ -49,10 +49,19 @@ resource "yandex_vpc_security_group" "BASTION" {
 
   ingress {
     protocol       = "TCP"
-    description    = "nexus"
+    description    = "nexus_web"
     v4_cidr_blocks = ["0.0.0.0/0"]
     from_port      = 8081
     to_port        = 8082
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "nexus_image"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 5000
+    
+    to_port        = 5000
   }
 
   egress {
