@@ -47,7 +47,6 @@ sudo systemctl restart nginx
 ## Install Node Exporter and Nginx Log Exporter
 
 ```
-sudo docker pull quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
 sudo docker run -d \
     --name nginx-exporter \
     -v /var/log/nginx/:/mnt/nginxlogs \
