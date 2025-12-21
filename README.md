@@ -16,7 +16,7 @@ cd ansible
 ansible-playbook -i hosts.ini playbook.yaml
 ```
 
-## 3 Change nginx config and pull app image from docker hub:
+## 3 Pull app image from docker hub and change nginx config :fast_forward:
 ```
 # run app in container
 docker login
@@ -42,4 +42,16 @@ sudo ln -s /etc/nginx/sites-available/my-app /etc/nginx/sites-enabled/my-app
 sudo rm /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl restart nginx
+```
+
+## Install Node Exporter and Nginx Log Exporter
+
+```
+sudo docker pull quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
+sudo docker run -d \
+    --name nginx-exporter \
+    -v /var/log/nginx/:/mnt/nginxlogs \
+    -p 4040:4040 \
+    quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0 \
+    mnt/nginxlogs/access.log
 ```
