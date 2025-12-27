@@ -20,6 +20,16 @@ ansible-playbook -i hosts.ini playbook.yaml
 ```
 # run app in container
 docker login
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  app:
+    image: fox4kids/myrepo:currency
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+EOF
+
+docker login
 docker pull fox4kids/myrepo:currency
 docker run -d -p 5000:5000 fox4kids/myrepo:currency
 
@@ -44,13 +54,129 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## Install Node Exporter and Nginx Log Exporter
+## 4 Install and run Node Exporter and Nginx Log Exporter
 
 ```
+# Nginx Log Exporter
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  nginx-exporter:
+    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
+    volumes: 
+      - /var/log/nginx/:/mnt/nginxlogs
+    ports:
+      - 4040:4040
+    restart: unless-stopped
+EOF
+
 sudo docker run -d \
     --name nginx-exporter \
     -v /var/log/nginx/:/mnt/nginxlogs \
     -p 4040:4040 \
     quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0 \
     mnt/nginxlogs/access.log
+
+# Node Exporter
+cd ~
+wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-amd64.tar.gz
+tar xvfz node_exporter-1.10.2.linux-amd64.tar.gz
+
+sudo cp node_exporter-files/node_exporter /usr/bin/
+sudo chown node_exporter:node_exporter /usr/bin/node_exporter
+
+sudo useradd -g node_exporter --no-create-home --shell /bin/false node_exporter
+sudo groupadd -f node_exporter
+sudo mkdir /etc/node_exporter
+sudo chown node_exporter:node_exporter /etc/node_exporter
+
+sudo tee /etc/systemd/system/node_exporter.service > /den/null <<'EOF'
+[Unit]
+Description=My Node exporter service
+After=network.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+Restart=on-failure
+ExecStart=/usr/bin/node_exporter \
+  --web.listen-address=:9200
+
+[Install]
+WantedBy=graphical.target
+EOF
+```
+
+## 5 Install and run Prometheus
+```
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  prometheus:
+    image: prom/prometheus:v3.3.0
+    volumes: 
+      - ./prometheus:/etc/prometheus/
+      -  prometheus-data:/prometheus
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+volumes:
+   prometheus-data:
+EOF
+
+cd ~
+wget https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.linux-amd64.tar.gz
+tar xvzf prometheus-3.5.0.linux-amd64.tar.gz 
+cd prometheus-3.5.0.linux-amd64/
+
+sudo useradd --no-create-home --shell /bin/false prometheus
+sudo mkdir /etc/prometheus
+sudo mkdir /var/lib/prometheus
+sudo cp prometheus promtool /usr/local/bin/
+sudo cp prometheus.yml /etc/prometheus/
+
+sudo chown prometheus:prometheus /usr/local/bin/prometheus
+sudo chown prometheus:prometheus /usr/local/bin/promtool
+sudo chown -R prometheus:prometheus /etc/prometheus/
+
+# Automation run
+sudo tee /etc/systemd/system/prometheus.service > /dev/null <<'EOF'
+[Unit]
+Description=My Prometheus service
+After=network.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=prometheus \
+--config.file /etc/prometheus/prometheus.yml \
+--storage.tsdb.path /var/lib/prometheus/
+ExecReload=/bin/kill -HUP $MAINPID Restart=on-failure
+
+[Install]
+WantedBy=graphical.target
+EOF
+
+systemctl enable prometheus.service
+systemctl start prometheus.service
+systemctl daemon-reload
+systemctl status prometheus.service
+```
+
+## 6 Install and run Grafana
+```
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  grafana:
+    image: grafana/grafana:11.6.1
+    volumes:
+      - ./grafana/:/etc/grafana/
+      - grafana-data:/grafana
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/custom.ini
+    ports:
+      - 80:3000
+    restart: unless-stopped
+volumes:
+   grafana-data:
 ```
