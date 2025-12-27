@@ -24,6 +24,7 @@ sudo tee docker-compose.yaml > /den/null <<'EOF'
 services:
   app:
     image: fox4kids/myrepo:currency
+    container_name: currency
     ports:
       - 5000:5000
     restart: unless-stopped
@@ -113,6 +114,7 @@ sudo tee docker-compose.yaml > /den/null <<'EOF'
 services:
   prometheus:
     image: prom/prometheus:v3.3.0
+    container_name: prometheus
     volumes: 
       - ./prometheus:/etc/prometheus/
       -  prometheus-data:/prometheus
@@ -169,6 +171,7 @@ sudo tee docker-compose.yaml > /den/null <<'EOF'
 services:
   grafana:
     image: grafana/grafana:11.6.1
+    container_name: grafana
     volumes:
       - ./grafana/:/etc/grafana/
       - grafana-data:/grafana
@@ -179,4 +182,64 @@ services:
     restart: unless-stopped
 volumes:
    grafana-data:
+EOF
+```
+
+## 7 Install and run ELK
+```
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  elasticsearch:
+    image: elasticsearch:9.1.5
+    container_name: elasticsearch
+    environment:
+      - cluster.name="my-elk-cluster"
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    mem_limit: 1073741824
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - "./elasticsearch-data:/usr/share/elasticsearch/data"
+    ports:
+      - 9200:9200
+EOF
+```
+
+## 8 Install and run Filebeat
+```
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  filebeat:
+    container_name: filebeat
+    image: elastic/filebeat:9.1.5
+    command: --strict.perms=false
+    environment:
+      - ELASTIC_HOSTS="http://${CONTAINER_NAME}:9200"
+    volumes:
+      - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "./nginx/log:/usr/share/logstash/nginx/log:ro"
+EOF
+```
+
+## 9 Install and run Kibana
+```
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  kibana:
+    container_name: kibana
+    image: kibana:9.1.5
+    environment:
+      - ELASTICSEARCH_HOSTS="http://${CONTAINER_NAME}:9200"
+    ports:
+      - 5601:5601
+    mem_limit: 1073741824
+EOF
 ```
