@@ -15,10 +15,21 @@ locals {
       cidr = "10.0.1.0/24"
       role = "lan"
     }
+    grafana = {
+      zone = "ru-central1-a"
+      cidr = "10.0.1.0/24"
+      role = "wan"
+    }
   }
-  security_groups = {
-    wan = yandex_vpc_security_group.WAN.id
-    lan = yandex_vpc_security_group.LAN.id
+  role_config = {
+    wan = {
+      nat = true
+      sg  = yandex_vpc_security_group.WAN.id
+    }
+    lan = {
+      nat = false
+      sg  = yandex_vpc_security_group.LAN.id
+    }
   }
 }
 

@@ -78,6 +78,20 @@ sudo docker run -d \
     mnt/nginxlogs/access.log
 
 # Node Exporter
+sudo tee docker-compose.yaml > /den/null <<'EOF'
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+EOF
+
 cd ~
 wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-amd64.tar.gz
 tar xvfz node_exporter-1.10.2.linux-amd64.tar.gz
