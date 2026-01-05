@@ -1,8 +1,0 @@
-#cloud-config
-users:
-  - name: fox
-    groups: sudo
-    shell: /bin/bash
-    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-    ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINuuVAFzJACIyWOdbr39U8EhKVKiKitPXYfC7WgmCLx9 yuri@ubuntu-home

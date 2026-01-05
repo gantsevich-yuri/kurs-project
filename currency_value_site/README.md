@@ -1,4 +1,4 @@
-### Build, run, check and psuh currency value app image to Dockerhub
+### Build, run, check and push currency value app image to Dockerhub
 
 ```
 docker build -t currency:v1 .
