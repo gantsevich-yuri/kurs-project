@@ -31,6 +31,7 @@ resource "yandex_compute_instance" "app1" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "app1"
     serial-port-enable = "1"
   }
 
@@ -65,6 +66,7 @@ resource "yandex_compute_instance" "app2" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "app2"
     serial-port-enable = "1"
   }
 
@@ -99,6 +101,7 @@ resource "yandex_compute_instance" "prometheus" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "prometheus"
     serial-port-enable = "1"
   }
 
@@ -133,6 +136,7 @@ resource "yandex_compute_instance" "elk" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "elasticsearch"
     serial-port-enable = "1"
   }
 
@@ -167,6 +171,7 @@ resource "yandex_compute_instance" "grafana" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "grafana"
     serial-port-enable = "1"
   }
 
@@ -201,6 +206,7 @@ resource "yandex_compute_instance" "kibana" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "kibana"
     serial-port-enable = "1"
   }
 
@@ -235,6 +241,7 @@ resource "yandex_compute_instance" "bastion" {
 
   metadata = {
     user-data          = file("./cloud-init.yml")
+    hostname           = "bastion"
     serial-port-enable = "1"
   }
 
