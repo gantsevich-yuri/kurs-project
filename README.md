@@ -34,10 +34,14 @@ services:
       - 5000:5000
     restart: unless-stopped
 
-  nginx-exporter:
+  nginxlog-exporter:
     image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
+    container_name: nginxlog-exporter
+    command:
+      - "--config-file=/etc/nginxlog-exporter/config.hcl"
     volumes:
-      - /var/log/nginx/:/mnt/nginxlogs
+      - /var/log/nginx/:/mnt/nginxlogs:ro
+      - ./nginxlog-exporter.hcl:/etc/nginxlog-exporter/config.hcl:ro
     ports:
       - 4040:4040
     restart: unless-stopped
@@ -63,6 +67,41 @@ services:
 EOF
 
 sudo docker compose up -d
+```
+
+```
+# nginxlog-exporter config
+sudo tee nginxlog-exporter.hcl > /dev/null <<'EOF'
+listen {
+  port = 4040
+}
+
+namespace "nginx" {
+  source = {
+    files = ["/mnt/nginxlogs/access.log"]
+  }
+
+  format = "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\""
+
+  labels {
+    app = "my-currency-app"
+  }
+
+  metrics {
+    counter {
+      name = "http_requests_total"
+      help = "Total number of HTTP requests"
+    }
+
+    histogram {
+      name = "http_response_size_bytes"
+      help = "HTTP response size in bytes"
+      value = "$body_bytes_sent"
+      buckets = [100, 500, 1000, 5000, 10000, 50000, 100000]
+    }
+  }
+}
+EOF
 ```
 
 ```
@@ -205,3 +244,31 @@ services:
     mem_limit: 1073741824
 EOF
 ```
+
+## Result :white_check_mark:
+
+## 1 All VMs
+![vms](all_vms.png)
+
+## 2 VPC
+![VPC](VPC.png)
+
+## 3 NLB
+![NLB](nlb.png)
+
+## 4 Connection via Bastion host
+![bastion](bastion.png)
+
+## 5 My App
+![mysite](mysite.png)
+
+![curl](curl.png)
+
+## 6 Monitoring
+![metrics](metrics.png)
+
+![grafana](grafana.png)
+
+## 7 Logs
+
+## 8 Backups
