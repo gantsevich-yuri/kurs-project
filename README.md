@@ -256,19 +256,24 @@ EOF
 ## 3 NLB
 ![NLB](nlb.png)
 
-## 4 Connection via Bastion host
+## 4 Install packages via Ansible
+[Ansible](https://github.com/gantsevich-yuri/kurs-project/tree/main/ansible)
+
+![ansible](ansible.png)
+
+## 5 Connection via Bastion host
 ![bastion](bastion.png)
 
-## 5 My App
+## 6 My App
 ![mysite](mysite.png)
 
 ![curl](curl.png)
 
-## 6 Monitoring
+## 7 Monitoring
 ![metrics](metrics.png)
 
 ![grafana](grafana.png)
 
-## 7 Logs
+## 8 Logs
 
-## 8 Backups
+## 9 Backups
