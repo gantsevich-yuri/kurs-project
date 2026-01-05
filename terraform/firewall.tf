@@ -60,7 +60,21 @@ resource "yandex_vpc_security_group" "LAN" {
 
   ingress {
     protocol       = "TCP"
-    description    = "prometheus"
+    description    = "prometheus node exportet"
+    v4_cidr_blocks = ["10.0.0.0/16"]
+    port           = 9100
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "prometheus nginx exporter"
+    v4_cidr_blocks = ["10.0.0.0/16"]
+    port           = 4040
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "grafana to prometheus"
     v4_cidr_blocks = ["10.0.0.0/16"]
     port           = 9090
   }
