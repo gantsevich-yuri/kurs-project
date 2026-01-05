@@ -126,7 +126,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## 4 Install, config and run Prometheus
+## 4 Install, config and run Prometheus :fast_forward:
 ```
 # prometheus config
 mkdir -p ~/prometheus
@@ -169,7 +169,7 @@ volumes:
 EOF
 ```
 
-## 5 Install and run Grafana
+## 5 Install and run Grafana :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
@@ -186,7 +186,7 @@ volumes:
 EOF
 ```
 
-## 6 Install and run ELK
+## 6 Install and run ELK :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
@@ -214,7 +214,7 @@ services:
 EOF
 ```
 
-## 7 Install and run Filebeat
+## 7 Install and run Filebeat :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
@@ -230,7 +230,7 @@ services:
 EOF
 ```
 
-## 8 Install and run Kibana
+## 8 Install and run Kibana :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
