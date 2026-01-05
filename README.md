@@ -18,8 +18,10 @@ ansible-playbook -i hosts.ini playbook.yaml
 
 ## 3 Pull app image from docker hub and change nginx config :fast_forward:
 ```
-# run app in container
+# download and run app
 docker login
+docker pull fox4kids/myrepo:currency
+
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   app:
@@ -30,9 +32,7 @@ services:
     restart: unless-stopped
 EOF
 
-docker login
-docker pull fox4kids/myrepo:currency
-docker run -d -p 5000:5000 fox4kids/myrepo:currency
+sudo docker compose up -d
 
 # add nginx config
 sudo tee /etc/nginx/sites-available/my-app > /dev/null <<'EOF'
@@ -124,6 +124,27 @@ EOF
 
 ## 5 Install and run Prometheus
 ```
+mkdir -p ~/prometheus
+sudo tee ~/prometheus/prometheus.yml > /dev/null <<'EOF'
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'node_exporters'
+    static_configs:
+      - targets:
+          - '10.0.10.35:9100'  # app1
+          - '10.0.20.12:9100'  # app2
+
+  - job_name: 'nginx_log_exporters'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - '10.0.10.35:4040'  # app1
+          - '10.0.20.12:4040'  # app2
+EOF
+
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   prometheus:

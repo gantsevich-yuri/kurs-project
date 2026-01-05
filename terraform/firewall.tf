@@ -53,6 +53,13 @@ resource "yandex_vpc_security_group" "LAN" {
 
   ingress {
     protocol       = "TCP"
+    description    = "from LB"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 80
+  }
+
+  ingress {
+    protocol       = "TCP"
     description    = "prometheus"
     v4_cidr_blocks = ["10.0.0.0/16"]
     port           = 9090
