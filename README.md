@@ -20,7 +20,7 @@ ansible-playbook -i hosts.ini playbook.yaml
 ```
 # run app in container
 docker login
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   app:
     image: fox4kids/myrepo:currency
@@ -59,7 +59,7 @@ sudo systemctl restart nginx
 
 ```
 # Nginx Log Exporter
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   nginx-exporter:
     image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
@@ -78,7 +78,7 @@ sudo docker run -d \
     mnt/nginxlogs/access.log
 
 # Node Exporter
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -104,7 +104,7 @@ sudo groupadd -f node_exporter
 sudo mkdir /etc/node_exporter
 sudo chown node_exporter:node_exporter /etc/node_exporter
 
-sudo tee /etc/systemd/system/node_exporter.service > /den/null <<'EOF'
+sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<'EOF'
 [Unit]
 Description=My Node exporter service
 After=network.target
@@ -124,7 +124,7 @@ EOF
 
 ## 5 Install and run Prometheus
 ```
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   prometheus:
     image: prom/prometheus:v3.3.0
@@ -181,7 +181,7 @@ systemctl status prometheus.service
 
 ## 6 Install and run Grafana
 ```
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   grafana:
     image: grafana/grafana:11.6.1
@@ -201,7 +201,7 @@ EOF
 
 ## 7 Install and run ELK
 ```
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   elasticsearch:
     image: elasticsearch:9.1.5
@@ -229,7 +229,7 @@ EOF
 
 ## 8 Install and run Filebeat
 ```
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   filebeat:
     container_name: filebeat
@@ -245,7 +245,7 @@ EOF
 
 ## 9 Install and run Kibana
 ```
-sudo tee docker-compose.yaml > /den/null <<'EOF'
+sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   kibana:
     container_name: kibana
