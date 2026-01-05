@@ -3,13 +3,19 @@ resource "yandex_vpc_network" "devnet" {
   name = "devnet"
 }
 
-# Create VPC Subnets
-resource "yandex_vpc_subnet" "devsubnet" {
-  for_each       = local.instances
-  name           = "subnet-${each.key}"
+# Create VPC Subnet 1
+resource "yandex_vpc_subnet" "devsubnet_1" {
+  v4_cidr_blocks = ["10.0.10.0/24"]
+  zone           = "ru-central1-a"
   network_id     = yandex_vpc_network.devnet.id
-  v4_cidr_blocks = [each.value.cidr]
-  zone           = each.value.zone
+  route_table_id = yandex_vpc_route_table.devroute.id
+}
+
+# Create VPC Subnet 2
+resource "yandex_vpc_subnet" "devsubnet_2" {
+  v4_cidr_blocks = ["10.0.20.0/24"]
+  zone           = "ru-central1-b"
+  network_id     = yandex_vpc_network.devnet.id
   route_table_id = yandex_vpc_route_table.devroute.id
 }
 
@@ -34,12 +40,14 @@ resource "yandex_vpc_gateway" "devnet_natgw" {
 resource "yandex_lb_target_group" "devtg" {
   name = "devnet-target-group"
 
-  dynamic "target" {
-    for_each = yandex_compute_instance.vm
-    content {
-      subnet_id = yandex_vpc_subnet.devsubnet[target.key].id
-      address   = target.value.network_interface.0.ip_address
-    }
+  target {
+    subnet_id = yandex_vpc_subnet.devsubnet_1.id
+    address   = yandex_compute_instance.app1.network_interface.0.ip_address
+  }
+
+  target {
+    subnet_id = yandex_vpc_subnet.devsubnet_2.id
+    address   = yandex_compute_instance.app2.network_interface.0.ip_address
   }
 }
 
