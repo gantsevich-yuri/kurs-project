@@ -85,7 +85,7 @@
         groups: docker
         append: yes
 
----
+
 - name: Install Docker on other VMs
   hosts: other
   become: true  
