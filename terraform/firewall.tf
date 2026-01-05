@@ -24,8 +24,8 @@ resource "yandex_vpc_security_group" "WAN" {
   }
 
   ingress {
-    protocol       = "TCP"
-    description    = "ssh from internal"
+    protocol    = "TCP"
+    description = "ssh from internal"
     #v4_cidr_blocks = ["10.0.0.0/16"]
     v4_cidr_blocks = ["0.0.0.0/0"] # add 0/0 for install docker pckg from ansible playbook 
     port           = 22

@@ -188,6 +188,10 @@ EOF
 
 ## 6 Install and run ELK :fast_forward:
 ```
+mkdir -p ./elasticsearch-data
+sudo chown -R 1000:1000 ./elasticsearch-data
+sudo chmod -R 770 ./elasticsearch-data
+
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   elasticsearch:
@@ -197,16 +201,8 @@ services:
       - cluster.name="my-elk-cluster"
       - xpack.security.enabled=false
       - discovery.type=single-node
-    mem_limit: 1073741824
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    cap_add:
-      - IPC_LOCK
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+    mem_limit: 4g
     volumes:
       - "./elasticsearch-data:/usr/share/elasticsearch/data"
     ports:
@@ -216,17 +212,37 @@ EOF
 
 ## 7 Install and run Filebeat :fast_forward:
 ```
+sudo tee filebeat.yml > /dev/null <<'EOF'
+filebeat.inputs:
+ - type: filestream
+   enabled: true
+   id: my-nginx-logs
+   paths:
+     - /var/log/nginx/*.log
+
+processors:
+  - drop_event:
+      when:
+        contains:
+          message: "YC-Healthcheck"
+
+output.elasticsearch:
+  hosts: ["10.0.10.3:9200"]
+  indices:
+    - index: "log-nginx-%{+yyyy.MM.dd}"
+EOF
+```
+
+```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
   filebeat:
     container_name: filebeat
     image: elastic/filebeat:9.1.5
     command: --strict.perms=false
-    environment:
-      - ELASTIC_HOSTS="http://${CONTAINER_NAME}:9200"
     volumes:
       - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
-      - "./nginx/log:/usr/share/logstash/nginx/log:ro"
+      - "/var/log/nginx:/var/log/nginx:ro"
 EOF
 ```
 
@@ -238,7 +254,7 @@ services:
     container_name: kibana
     image: kibana:9.1.5
     environment:
-      - ELASTICSEARCH_HOSTS="http://${CONTAINER_NAME}:9200"
+      - ELASTICSEARCH_HOSTS="http://10.0.10.3:9200"
     ports:
       - 5601:5601
     mem_limit: 1073741824
@@ -275,5 +291,9 @@ EOF
 ![grafana](grafana.png)
 
 ## 8 Logs
+![logs](logs.png)
+
+![kibana](kibana.png)
 
 ## 9 Backups
+Release via [Terraform](https://github.com/gantsevich-yuri/kurs-project/tree/main/terraform)

@@ -23,6 +23,10 @@ resource "yandex_compute_instance" "app1" {
     }
   }
 
+  labels = {
+    backup = "snapshot"
+  }
+
   network_interface {
     subnet_id          = yandex_vpc_subnet.devsubnet_1.id
     nat                = false
@@ -114,9 +118,11 @@ resource "yandex_compute_instance" "elk" {
   platform_id = "standard-v3"
   zone        = var.zone_id
 
+  allow_stopping_for_update = true
+
   resources {
     cores         = 2
-    memory        = 1
+    memory        = 4
     core_fraction = 20
   }
 
@@ -184,9 +190,11 @@ resource "yandex_compute_instance" "kibana" {
   platform_id = "standard-v3"
   zone        = var.zone_id
 
+  allow_stopping_for_update = true
+
   resources {
     cores         = 2
-    memory        = 1
+    memory        = 4
     core_fraction = 20
   }
 
