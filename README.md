@@ -1,4 +1,6 @@
-## 1 Deploy vms :fast_forward:
+## 0 [Task](https://github.com/netology-code/fops-sysadm-diplom/blob/main/README.md) :warning:
+
+## 1 Deploy infrastructure via Terraform :fast_forward:
 
 ```
 cd terraform
@@ -9,14 +11,14 @@ terraform plan
 terraform apply -auto-approve
 ```
 
-## 2 Install packages from playbook :fast_forward:
+## 2 Install packages via Ansible Playbook :fast_forward:
 ```
 cd ..
 cd ansible
 ansible-playbook -i hosts.ini playbook.yaml
 ```
 
-## 3 Configuration web server :fast_forward:
+## 3 Deploy web server, application and exporters :fast_forward:
 ```
 # download and run app
 docker login
@@ -126,7 +128,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## 4 Install, config and run Prometheus :fast_forward:
+## 4 Deploy Prometheus :fast_forward:
 ```
 # prometheus config
 mkdir -p ~/prometheus
@@ -169,7 +171,7 @@ volumes:
 EOF
 ```
 
-## 5 Install and run Grafana :fast_forward:
+## 5 Deploy Grafana :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
@@ -186,7 +188,7 @@ volumes:
 EOF
 ```
 
-## 6 Install and run ELK :fast_forward:
+## 6 Deploy Elasticsearch :fast_forward:
 ```
 mkdir -p ./elasticsearch-data
 sudo chown -R 1000:1000 ./elasticsearch-data
@@ -211,7 +213,7 @@ services:
 EOF
 ```
 
-## 7 Install and run Filebeat :fast_forward:
+## 7 Deploy Filebeat :fast_forward:
 ```
 sudo tee filebeat.yml > /dev/null <<'EOF'
 filebeat.inputs:
@@ -248,7 +250,7 @@ services:
 EOF
 ```
 
-## 8 Install and run Kibana :fast_forward:
+## 8 Deploy Kibana :fast_forward:
 ```
 sudo tee docker-compose.yaml > /dev/null <<'EOF'
 services:
@@ -265,7 +267,7 @@ EOF
 
 ## Result :white_check_mark:
 
-## 1 All VMs
+## 1 All Infrastructure
 ![vms](all_vms.png)
 
 ## 2 VPC
