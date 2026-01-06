@@ -298,6 +298,6 @@ EOF
 ![kibana](kibana.png)
 
 ## 9 Backups
-Via [Terraform](https://github.com/gantsevich-yuri/kurs-project/tree/main/terraform)
+Via [Terraform](https://github.com/gantsevich-yuri/kurs-project/blob/main/terraform/snapshot.tf)
 
 ![snapshot](snapshot.png)
