@@ -207,6 +207,7 @@ services:
       - "./elasticsearch-data:/usr/share/elasticsearch/data"
     ports:
       - 9200:9200
+    restart: unless-stopped
 EOF
 ```
 
@@ -243,6 +244,7 @@ services:
     volumes:
       - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
       - "/var/log/nginx:/var/log/nginx:ro"
+    restart: unless-stopped
 EOF
 ```
 
@@ -296,4 +298,6 @@ EOF
 ![kibana](kibana.png)
 
 ## 9 Backups
-Release via [Terraform](https://github.com/gantsevich-yuri/kurs-project/tree/main/terraform)
+Via [Terraform](https://github.com/gantsevich-yuri/kurs-project/tree/main/terraform)
+
+![snapshot](snapshot.png)

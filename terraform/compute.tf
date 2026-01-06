@@ -23,10 +23,6 @@ resource "yandex_compute_instance" "app1" {
     }
   }
 
-  labels = {
-    backup = "snapshot"
-  }
-
   network_interface {
     subnet_id          = yandex_vpc_subnet.devsubnet_1.id
     nat                = false
