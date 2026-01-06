@@ -169,6 +169,8 @@ services:
 volumes:
    prometheus-data:
 EOF
+
+sudo docker compose up -d
 ```
 
 ## 5 Deploy Grafana :fast_forward:
@@ -186,6 +188,8 @@ services:
 volumes:
    grafana-data:
 EOF
+
+sudo docker compose up -d
 ```
 
 ## 6 Deploy Elasticsearch :fast_forward:
@@ -211,6 +215,8 @@ services:
       - 9200:9200
     restart: unless-stopped
 EOF
+
+sudo docker compose up -d
 ```
 
 ## 7 Deploy Filebeat :fast_forward:
@@ -248,6 +254,8 @@ services:
       - "/var/log/nginx:/var/log/nginx:ro"
     restart: unless-stopped
 EOF
+
+sudo docker compose up -d
 ```
 
 ## 8 Deploy Kibana :fast_forward:
@@ -262,7 +270,10 @@ services:
     ports:
       - 5601:5601
     mem_limit: 1073741824
+    restart: unless-stopped
 EOF
+
+sudo docker compose up -d
 ```
 
 ## Result :white_check_mark:
